@@ -720,17 +720,35 @@ var broadcast = {
      * @param {string} param   parameter to search for
      * @param {string} url     url to check
      * @return {string} value of the given param within the given url
+     * TODO: unit tests would be nice
      */
     getParamValue: function (param, url) {
         var lookFor = param + '=';
         var startStr = url.indexOf(lookFor);
 
         if (startStr >= 0) {
-            var endStr = url.indexOf("&", startStr);
+            return getSingleValue(startStr, url);
+        } else {
+            // try looking for multi value param
+            lookFor = param + '[]=';
+            startStr = url.indexOf(lookFor);
+            if (startStr >= 0) {
+                var result = [getSingleValue(startStr)];
+                while ((startStr = url.indexOf(lookFor, startStr + 1))) {
+                    result.push(getSingleValue(startStr));
+                }
+                return result;
+            } else {
+                return '';
+            }
+        }
+
+        function getSingleValue(startPos) {
+            var endStr = url.indexOf("&", startPos);
             if (endStr == -1) {
                 endStr = url.length;
             }
-            var value = url.substring(startStr + param.length + 1, endStr);
+            var value = url.substring(startPos + lookFor.length + 1, endStr);
 
             // we sanitize values to add a protection layer against XSS
             // &segment= value is not sanitized, since segments are designed to accept any user input
@@ -738,8 +756,6 @@ var broadcast = {
                 value = value.replace(/[^_%~\*\+\-\<\>!@\$\.()=,;0-9a-zA-Z]/gi, '');
             }
             return value;
-        } else {
-            return '';
         }
     },
 

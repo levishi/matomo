@@ -16,6 +16,10 @@
         var date   = getUrlParam('date');
         var segment = getUrlParam('segment');
 
+        var periods = getUrlParam('comparePeriods');
+        var dates   = getUrlParam('compareDates');
+        var segments = getUrlParam('compareSegments');
+
         function markAllCategoriesAsInactive()
         {
             angular.forEach(menuModel.menu, function (cat) {
@@ -69,18 +73,17 @@
         };
 
         $scope.makeUrl = function (category, subcategory) {
-
-            var url = 'idSite=' + encodeURIComponent(idSite);
-            url    += '&period=' + encodeURIComponent(period);
-            url    += '&date=' + encodeURIComponent(date);
-            url    += '&category=' + encodeURIComponent(category.id);
-            url    += '&subcategory=' + encodeURIComponent(subcategory.id);
-
-            if (segment) {
-                url+= '&segment='+ segment;
-            }
-            return url;
-        }
+            return $.param({
+                idSite: idSite,
+                period: period,
+                date: date,
+                category: category,
+                subcategory: subcategory,
+                compareDates: dates,
+                comparePeriods: periods,
+                compareSegments: segments,
+            });
+        };
 
         $scope.loadCategory = function (category) {
             if (category.active) {
@@ -149,6 +152,10 @@
             period = getUrlParam('period');
             date   = getUrlParam('date');
             segment = getUrlParam('segment');
+
+            periods = getUrlParam('comparePeriods');
+            dates   = getUrlParam('compareDates');
+            segments = getUrlParam('compareSegments');
 
             if (!category || !subcategory) {
                 return;

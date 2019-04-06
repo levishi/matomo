@@ -83,8 +83,12 @@
                             delete $urlParams['subcategory'];
                         }
 
-                        if (piwikUrl.getSearchParam('segment')) {
-                            $urlParams['segment'] = 'segment';
+                        var urlParamsToForward = ['segment', 'compareSegments', 'comparePeriods', 'compareDates'];
+                        for (var i = 0; i < urlParamsToForward.length; i++) {
+                            var value = piwikUrl.getSearchParam(urlParamsToForward[i]);
+                            if (value) {
+                                $urlParams[urlParamsToForward[i]] = value;
+                            }
                         }
 
                         angular.forEach($urlParams, function (value, key) {
@@ -97,7 +101,7 @@
                             url += '&showtitle=1';
                         }
 
-                        if (piwik.shouldPropagateTokenAuth && broadcast.getValueFromUrl('token_auth')) {
+                        if (broadcast.getValueFromUrl('module') == 'Widgetize' && broadcast.getValueFromUrl('token_auth')) {
                             url += '&token_auth=' + broadcast.getValueFromUrl('token_auth');
                         }
 
